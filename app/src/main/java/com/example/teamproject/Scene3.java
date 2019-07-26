@@ -207,7 +207,7 @@ public class Scene3 extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
+                            wsc.send("");
                         }
                     });
                 }
@@ -217,7 +217,7 @@ public class Scene3 extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            waitingView.setText("현재 대기인원 수 :" + message );
+                            waitingView.setText("현재 대기 인원 :" + message + " 명" );
                         }
                     });
                 }
