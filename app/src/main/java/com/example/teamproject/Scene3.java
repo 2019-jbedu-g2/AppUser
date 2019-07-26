@@ -22,17 +22,25 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft;
+import org.java_websocket.drafts.Draft_6455;
+import org.java_websocket.framing.Framedata;
+import org.java_websocket.handshake.ServerHandshake;
 
 public class Scene3 extends AppCompatActivity {
 
     private static final String  TAG = "Scene3";
     TextView barcodetv;
     public static String barcode_st = "";
+    private WebSocketClient wsc;
     ImageView barcode;
     String url = "http://192.168.0.20:8000/";
     ContentValues info = new ContentValues();
@@ -127,6 +135,7 @@ public class Scene3 extends AppCompatActivity {
         }
     }
 
+    // 서버로부터 바코드 발급 받고 화면에 출력.
     public class NetworkTask extends AsyncTask<Void, Void, String> {
 
         private String url;
@@ -160,8 +169,9 @@ public class Scene3 extends AppCompatActivity {
             Bitmap barcodes = createBarcode(barcode_st);
             barcode.setImageBitmap(barcodes);
             barcode.invalidate();
+            SocketConnect(storenum,bar);
         }
-
+        // 바코드 생성
         public Bitmap createBarcode(String code) {
             Bitmap bitmap = null;
             MultiFormatWriter gen = new MultiFormatWriter();
@@ -181,7 +191,67 @@ public class Scene3 extends AppCompatActivity {
             return bitmap;
         }
     }
+    // 소켓 연결 메소드
+    public void SocketConnect(String Storenum, String Barcode){
+        StringBuffer URL = new StringBuffer();
+        URL.append("ws://192.168.0.20/queue/");
+        URL.append(Storenum);
+        URL.append("/");
+        URL.append(Barcode);
+        String url = URL.toString();
+        try{
+            Draft d = new Draft_6455();
+            wsc = new WebSocketClient(new URI(url),d) {
+                @Override
+                public void onOpen(ServerHandshake handshakedata) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
+                        }
+                    });
+                }
+
+                @Override
+                public void onMessage(final String message) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            waitingView.setText("현재 대기인원 수 :" + message );
+                        }
+                    });
+                }
+
+                @Override
+                public void onClose(final int code, final String reason, boolean remote) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(final Exception ex) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ex.printStackTrace();
+                            Toast.makeText(getApplicationContext(),"서버와의 통신에 문제가 발생 하였습니다.",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            };
+        } catch(URISyntaxException E){
+            E.printStackTrace();
+            Toast.makeText(getApplicationContext(),"서버와의 연결에 실패하였습니다.",Toast.LENGTH_SHORT).show();
+        }
+        wsc.connect();
+    }
+
+
+    // 미루기/취소 용 네트워크 함수
     public class NetworkTask2 extends AsyncTask<Void, Void, String> {
 
         private String url;
@@ -205,6 +275,7 @@ public class Scene3 extends AppCompatActivity {
 
         protected  void onPostExecute(String s) {
             super.onPostExecute(s);
+
 //            doInBackground 로 부터 리턴된 값이 매개변수로 넘어오므로 s를 추력.
 //            tv.setText(s);
 //            barcodetv.setText(bar);
@@ -228,6 +299,7 @@ public class Scene3 extends AppCompatActivity {
                         System.out.println(info.toString());
                         Scene3.NetworkTask2 networkTask2 = new Scene3.NetworkTask2(url, info);
                         networkTask2.execute();
+                        wsc.send("");
                     }
                 });
         builder.setNegativeButton("아니오",
@@ -255,7 +327,7 @@ public class Scene3 extends AppCompatActivity {
                         System.out.println(info.toString());
                         Scene3.NetworkTask2 networkTask2 = new Scene3.NetworkTask2(url, info);
                         networkTask2.execute();
-
+                        wsc.close();
                         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                         startActivity(intent);
                     }
@@ -285,7 +357,7 @@ public class Scene3 extends AppCompatActivity {
                         System.out.println(info.toString());
                         Scene3.NetworkTask2 networkTask2 = new Scene3.NetworkTask2(url, info);
                         networkTask2.execute();
-
+                        wsc.close();
                         // 액티비티 종료
                         finish();
                     }
