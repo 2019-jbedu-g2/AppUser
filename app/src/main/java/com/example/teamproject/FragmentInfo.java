@@ -80,10 +80,11 @@ public class FragmentInfo extends Fragment {
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력
 
             super.onPostExecute(s);
-            String page = "["+s+"]";
+            StringBuffer sb1 = new StringBuffer();
+            sb1.append("[").append(s).append("]");
             StringBuffer SB = new StringBuffer();
             try {
-                JSONArray jArray = new JSONArray(page);
+                JSONArray jArray = new JSONArray(sb1.toString());
                 JSONObject jObject1 = (JSONObject) jArray.get(0);
                 String Num = (String) jObject1.get("storenum");
                 String Name = (String) jObject1.get("storename");
@@ -94,9 +95,6 @@ public class FragmentInfo extends Fragment {
                 Inform = Inform.replace("/", "\n");
 
                 SB.append("대기팀 : ").append(Waiting).append("\n\n가게이름 : ").append(Name).append("\n\n분류 : ").append(TEL).append("\n\n 가게 소개\n").append(Intro).append("\n\n가게정보\n").append(Inform);
-//                   text = "대기팀 : " + Waiting + "\n\n" + "StoreName : " + Name + "\n\n" + "CATEGORY : " + TEL + "\n\n" + "가게 소개\n " +
-////                            Intro + "\n\n" + "가게정보\n" + Inform;
-
             }catch (JSONException e) {
                     e.printStackTrace();
                 }

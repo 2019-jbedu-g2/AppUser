@@ -71,11 +71,11 @@ public class FragmentMenu extends Fragment {
 
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력
             super.onPostExecute(s);
-
-            String page = "["+s+"]";
+            StringBuffer sb = new StringBuffer();
+            sb.append("[").append(s).append("]");
             String text = "";
             try{
-            JSONArray jArray2 = new JSONArray(page);
+            JSONArray jArray2 = new JSONArray(sb.toString());
             for(int i=0;i<jArray2.length();i++) {
                 JSONObject jObject2 = (JSONObject)jArray2.get(i);
                 String M = (String) jObject2.optString("menu");
