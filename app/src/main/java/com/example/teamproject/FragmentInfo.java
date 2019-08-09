@@ -2,10 +2,8 @@ package com.example.teamproject;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +16,6 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class FragmentInfo extends Fragment {
     View view;

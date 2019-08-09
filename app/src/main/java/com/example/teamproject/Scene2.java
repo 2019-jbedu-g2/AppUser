@@ -28,7 +28,7 @@ public class Scene2 extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
         viewPager = (ViewPager) findViewById(R.id.viewpager_id);
-        Intent getin = getIntent();
+
         storenum = getIntent().getStringExtra("num");
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
@@ -37,13 +37,13 @@ public class Scene2 extends AppCompatActivity {
         adapter.AddFragment(new FragmentMenu(),"메뉴");
         adapter.AddFragment(new FragmentReview(),"리뷰");
 
-        String title = "";
-        Bundle extra = getIntent().getExtras();
-        if (extra == null){
-            title = "error";
-        }else{
-            title = extra.getString("title");
-        }
+//        String title = "";
+//        Bundle extra = getIntent().getExtras();
+//        if (extra == null){
+//            title = "error";
+//        }else{
+//            title = extra.getString("title");
+//        }
 
         //adapter Setup
         viewPager.setAdapter(adapter);
@@ -56,8 +56,6 @@ public class Scene2 extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-//                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-//                startActivity(intent);
             }
         });
 

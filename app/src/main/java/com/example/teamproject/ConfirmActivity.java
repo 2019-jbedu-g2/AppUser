@@ -3,15 +3,11 @@ package com.example.teamproject;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.NonNull;
 
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class ConfirmActivity extends AppCompatActivity {
@@ -20,14 +16,10 @@ public class ConfirmActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        init();
         setContentView(R.layout.activity_confirm);
-        if(reviewB == null){
-            reviewB = (Button) findViewById(R.id.ReviewButton);
-        }
-        if(ReturnB == null){
-            ReturnB = (Button) findViewById(R.id.ReturnButton);
-        }
+
+        init();
+
         reviewB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

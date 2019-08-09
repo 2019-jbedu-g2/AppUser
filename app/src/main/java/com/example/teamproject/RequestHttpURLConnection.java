@@ -2,11 +2,6 @@ package com.example.teamproject;
 
 import android.content.ContentValues;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -95,13 +90,13 @@ public class RequestHttpURLConnection {
 
             // 출력물의 라인과 그 합에 대한 변수.
             String line;
-            String page = "";
+            StringBuffer page = new StringBuffer();
 
             // 라인을 받아와 합친다.
             while ((line = reader.readLine()) != null){
-                page += line;
+                page.append(line);
             }
-            return page;
+            return page.toString();
 
         } catch (MalformedURLException e) { // for URL.
             e.printStackTrace();
