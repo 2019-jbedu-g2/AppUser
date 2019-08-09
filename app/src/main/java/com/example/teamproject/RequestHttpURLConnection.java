@@ -22,7 +22,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class RequestHttpURLConnection {
 
-    public String request1(String _url, ContentValues _params){
+    public String request(String _url, ContentValues _params){
 
         // HttpURLConnection 참조 변수.
         HttpURLConnection urlConn = null;
@@ -46,8 +46,8 @@ public class RequestHttpURLConnection {
                 value = parameter.getValue().toString();
 
                 // 파라미터가 두개 이상일때, 파라미터 사이에 /를 붙인다.
-                if (isAnd)
-                    sbParams.append("/");
+//                if (isAnd)
+//                    sbParams.append("/");
 
                 sbParams.append(key).append("/").append(value);
 
@@ -96,53 +96,17 @@ public class RequestHttpURLConnection {
             // 출력물의 라인과 그 합에 대한 변수.
             String line;
             String page = "";
-            String pageParsed1 = "";
-            String pageParsed2 = "";
 
             // 라인을 받아와 합친다.
             while ((line = reader.readLine()) != null){
                 page += line;
             }
-            page = "["+page+"]";
-            JSONArray jArray = new JSONArray(page);
-            for(int i=0;i<jArray.length();i++) {
-                JSONObject jObject1 = (JSONObject)jArray.get(0);
-                String Num = (String) jObject1.get("storenum");
-                String Name = (String) jObject1.get("storename");
-                String TEL = (String) jObject1.get("category");
-                String Intro = (String) jObject1.get("intro");
-                String Inform = (String) jObject1.get("inform");
-                String Waiting = (String) jObject1.get("latencytime");
-//                JSONObject jObject2 = (JSONObject)jArray.get(i);
-//                String M1 = (String) jObject1.optString("M1");
-//                String P1 = (String) jObject1.optString("P1");
-//                String M2 = (String) jObject1.optString("M2");
-//                String P2 = (String) jObject1.optString("P2");
-//                String M3 = (String) jObject1.optString("M3");
-//                String P3 = (String) jObject1.optString("P3");
-//                String M4 = (String) jObject1.optString("M4");
-//                String P4 = (String) jObject1.optString("P4");
-//                String M5 = (String) jObject1.optString("M5");
-//                String P5 = (String) jObject1.optString("P5");
-//                String M6 = (String) jObject1.optString("M6");
-//                String P6 = (String) jObject1.optString("P6");
-                Inform = Inform.replace("/","\n");
-
-                pageParsed1 = "대기팀 : " + Waiting + "\n\n" + "StoreName : " + Name + "\n\n" + "CATEGORY : " + TEL + "\n\n" + "가게 소개\n " +
-                        Intro + "\n\n" + "가게정보\n" + Inform;
-//                pageParsed2 = M1 + "\t\t\t\t" + P1 + "\n\n" + M2 + "\t\t\t\t" + P2 + "\n\n" +
-//                              M3 + "\t\t\t\t" + P3 + "\n\n" + M4 + "\t\t\t\t" + P4 + "\n\n" +
-//                              M5 + "\t\t\t\t" + P5 + "\n\n" + M6 + "\t\t\t\t" + P6;
-            }
-
-            return pageParsed1;
+            return page;
 
         } catch (MalformedURLException e) { // for URL.
             e.printStackTrace();
         } catch (IOException e) { // for openConnection().
             e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
         } finally {
             if (urlConn != null)
                 urlConn.disconnect();
@@ -150,155 +114,4 @@ public class RequestHttpURLConnection {
         return null;
     }
 
-    public String request2(String _url, ContentValues _params) {
-        HttpURLConnection urlConn = null;
-        StringBuffer sbParams = new StringBuffer();
-        if (_params == null) {
-            sbParams.append("");
-        }else {
-            boolean isAnd = false;
-            String key;
-            String value;
-            for(Map.Entry<String, Object> parameter : _params.valueSet()){
-                key = parameter.getKey();
-                value = parameter.getValue().toString();
-                if (isAnd)
-                    sbParams.append("/");
-
-                sbParams.append(key).append("/").append(value);
-                if (!isAnd)
-                    if (_params.size() >= 2)
-                        isAnd = true;
-            }
-        }
-        try{
-            _url = _url + sbParams.toString();
-            Log.d(TAG,_url);
-            URL url = new URL(_url);
-            urlConn = (HttpURLConnection) url.openConnection();
-            urlConn.setReadTimeout(1000);
-            urlConn.setConnectTimeout(1000);
-            urlConn.setRequestMethod("GET");
-            urlConn.setDoInput(true);
-            urlConn.setRequestProperty("Accept", "application/json");
-            urlConn.setRequestProperty("Context_Type", "application/json");
-
-            if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK)
-                return null;
-
-            BufferedReader reader2 = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), "UTF-8"));
-
-            String line;
-            String page = "";
-            String pageParsed1 = "";
-            String pageParsed2 = "";
-
-            while ((line = reader2.readLine()) != null){
-                page += line;
-            }
-            page = "["+page+"]";
-            JSONArray jArray2 = new JSONArray(page);
-            for(int i=0;i<jArray2.length();i++) {
-//                JSONObject jObject2 = (JSONObject)jArray.get(i);
-//                String Name = (String) jObject2.get("Name");
-//                String TEL = (String) jObject2.get("TEL");
-//                String Open = (String) jObject2.get("Open");
-//                String Close = (String) jObject2.get("Close");
-                JSONObject jObject2 = (JSONObject)jArray2.get(i);
-                String M = (String) jObject2.optString("menu");
-
-
-//                String P1 = (String) jObject2.optString("P1");
-//                String M2 = (String) jObject2.optString("M2");
-//                String P2 = (String) jObject2.optString("P2");
-//                String M3 = (String) jObject2.optString("M3");
-//                String P3 = (String) jObject2.optString("P3");
-//                String M4 = (String) jObject2.optString("M4");
-//                String P4 = (String) jObject2.optString("P4");
-//                String M5 = (String) jObject2.optString("M5");
-//                String P5 = (String) jObject2.optString("P5");
-//                String M6 = (String) jObject2.optString("M6");
-//                String P6 = (String) jObject2.optString("P6");
-
-//                pageParsed1 = Name + "\n\n" + "TEL : " + TEL + "\n\n" + "Open  " +
-//                     Open + " / " + "Close  " + Close + "\n\n" + "예상 대기시간 : " + Waiting;
-                pageParsed2 = M.replace("/","\n\n");
-            }
-
-            return pageParsed2;
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConn != null)
-                urlConn.disconnect();
-        }
-        return null;
-    }
-
-    public String request3(String _url, ContentValues _params) {
-        HttpURLConnection urlConn = null;
-        StringBuffer sbParams = new StringBuffer();
-        if (_params == null) {
-            sbParams.append("");
-        }else {
-            boolean isAnd = false;
-            String key;
-            String value;
-            for(Map.Entry<String, Object> parameter : _params.valueSet()){
-                if(!(parameter.getKey() == "zzzzzzzz")) {
-                    key = parameter.getKey();
-                } else
-                    key="";
-                value = parameter.getValue().toString();
-                if (isAnd)
-                    sbParams.append("");
-
-                sbParams.append(key).append("/").append(value);
-                if (!isAnd)
-                    if (_params.size() >= 2)
-                        isAnd = true;
-            }
-        }
-        try{
-            _url = _url + sbParams.toString();
-            Log.d(TAG,_url);
-            URL url = new URL(_url);
-            urlConn = (HttpURLConnection) url.openConnection();
-            urlConn.setReadTimeout(1000);
-            urlConn.setConnectTimeout(1000);
-            urlConn.setRequestMethod("GET");
-            urlConn.setDoInput(true);
-            urlConn.setRequestProperty("Accept", "application/json");
-            urlConn.setRequestProperty("Context_Type", "application/json");
-
-            if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK)
-                return null;
-
-            BufferedReader reader2 = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), "UTF-8"));
-
-            String line;
-            String page = "";
-
-            while ((line = reader2.readLine()) != null){
-                page += line;
-            }
-            return page;
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConn != null)
-                urlConn.disconnect();
-        }
-        return null;
-    }
 }
-
-

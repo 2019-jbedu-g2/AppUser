@@ -22,19 +22,29 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft;
+import org.java_websocket.drafts.Draft_6455;
+import org.java_websocket.framing.Framedata;
+import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Scene3 extends AppCompatActivity {
 
     private static final String  TAG = "Scene3";
     TextView barcodetv;
     public static String barcode_st = "";
+    private WebSocketClient wsc;
     ImageView barcode;
-    String url = "http://192.168.0.20:8000/";
+    String url = "http://192.168.0.8:8000/";
     ContentValues info = new ContentValues();
     String storenum = "";
     String bar ="";
@@ -51,7 +61,7 @@ public class Scene3 extends AppCompatActivity {
             Intent getin = getIntent();
             storenum = getIntent().getStringExtra("num");
             info.put("waiting", storenum);
-            Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info);
+            Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info,"barcode");
             networkTask.execute();
 //        }
 //        else if (Scene3.barcode_st != "") {
@@ -126,16 +136,92 @@ public class Scene3 extends AppCompatActivity {
             btnCancel = (Button) findViewById(R.id.btnCancel);
         }
     }
+    // 소켓 연결 메소드
+    public void SocketConnect(String Storenum, String Barcode){
+        StringBuffer URL = new StringBuffer();
+        URL.append("ws://192.168.0.8:8000/queue/");
+        URL.append(Storenum);
+        URL.append("/");
+        URL.append(Barcode);
+        String url = URL.toString();
+        try{
+            Draft d = new Draft_6455();
+            wsc = new WebSocketClient(new URI(url),d) {
+                @Override
+                public void onOpen(ServerHandshake handshakedata) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            wsc.send("");
+                        }
+                    });
+                }
 
+                @Override
+                public void onMessage(String message) {
+
+                    try {
+                        JSONObject text = new JSONObject(message);
+                        final String number = text.getString("message");
+                        if(number.equals("확인이 불가합니다.")){
+                            Intent intent = new Intent(getApplicationContext(),ConfirmActivity.class);
+                            wsc.close();
+                            startActivity(intent);
+                        }else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    waitingView.setText("현재 대기 인원 :" + number + " 명" );
+                                }
+                            });
+
+                    }
+                }catch (JSONException E){
+                        E.getStackTrace();
+                    }
+                }
+
+                @Override
+                public void onClose(final int code, final String reason, boolean remote) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(final Exception ex) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ex.printStackTrace();
+                            Toast.makeText(getApplicationContext(),"서버와의 통신에 문제가 발생 하였습니다.",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            };
+        } catch(URISyntaxException E){
+            E.printStackTrace();
+            Toast.makeText(getApplicationContext(),"서버와의 연결에 실패하였습니다.",Toast.LENGTH_SHORT).show();
+        }
+        wsc.connect();
+    }
+
+
+    // http 네트워크 함수
     public class NetworkTask extends AsyncTask<Void, Void, String> {
 
         private String url;
         private ContentValues values;
+        private String CalledType;
 
-        public NetworkTask(String url, ContentValues values) {
+        public NetworkTask(String url, ContentValues values, String CalledType) {
 
             this.url = url;
             this.values = values;
+            this.CalledType = CalledType;
         }
 
         @Override
@@ -143,25 +229,36 @@ public class Scene3 extends AppCompatActivity {
 
             String result;          // 요청 결과를 저장할 변수
             RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-            result = requestHttpURLConnection.request3(url,values);
+            result = requestHttpURLConnection.request(url,values);
 
             return result;
         }
 
         protected  void onPostExecute(String s) {
             super.onPostExecute(s);
-//            doInBackground 로 부터 리턴된 값이 매개변수로 넘어오므로 s를 추력.
+            if(CalledType.equals("delay")) {
+                wsc.send("");
+            }else if( CalledType.equals("cancel")){
+                wsc.send("");
+                wsc.close();
+            }else if(CalledType.equals("barcode")){
+                //            doInBackground 로 부터 리턴된 값이 매개변수로 넘어오므로 s를 추력.
 //            tv.setText(s);
-            bar = s.substring(0,10);
-            String text = s.substring(12);
-            barcodetv.setText(bar);
-            barcode_st = bar;
-            waitingView.setText(text);
-            Bitmap barcodes = createBarcode(barcode_st);
-            barcode.setImageBitmap(barcodes);
-            barcode.invalidate();
+                if(s.length()<10){}else {
+                    bar = s.substring(0, 10);
+                    String text = s.substring(12);
+                    barcodetv.setText(bar);
+                    barcode_st = bar;
+                    waitingView.setText(text);
+                    Bitmap barcodes = createBarcode(barcode_st);
+                    barcode.setImageBitmap(barcodes);
+                    barcode.invalidate();
+                    SocketConnect(storenum, bar);
+                }
+            }
+            }
         }
-
+        // 바코드 생성
         public Bitmap createBarcode(String code) {
             Bitmap bitmap = null;
             MultiFormatWriter gen = new MultiFormatWriter();
@@ -180,37 +277,7 @@ public class Scene3 extends AppCompatActivity {
             }
             return bitmap;
         }
-    }
 
-    public class NetworkTask2 extends AsyncTask<Void, Void, String> {
-
-        private String url;
-        private ContentValues values;
-
-        public NetworkTask2(String url, ContentValues values) {
-
-            this.url = url;
-            this.values = values;
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-
-            String result;          // 요청 결과를 저장할 변수
-            RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-            result = requestHttpURLConnection.request3(url,values);
-
-            return result;
-        }
-
-        protected  void onPostExecute(String s) {
-            super.onPostExecute(s);
-//            doInBackground 로 부터 리턴된 값이 매개변수로 넘어오므로 s를 추력.
-//            tv.setText(s);
-//            barcodetv.setText(bar);
-//            waitingView.setText(text);
-        }
-    }
 
     public void show_delay() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -223,11 +290,11 @@ public class Scene3 extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "양보하였습니다.", Toast.LENGTH_LONG).show();
                         initControls();
                         info.clear();
-                        info.put("waiting",storenum);
-                        info.put("zzzzzzzz",bar);
-                        System.out.println(info.toString());
-                        Scene3.NetworkTask2 networkTask2 = new Scene3.NetworkTask2(url, info);
-                        networkTask2.execute();
+                        StringBuffer sb = new StringBuffer();
+                        sb.append(storenum).append("/").append(bar);
+                        info.put("waiting",sb.toString());
+                        Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info,"delay");
+                        networkTask.execute();
                     }
                 });
         builder.setNegativeButton("아니오",
@@ -253,9 +320,8 @@ public class Scene3 extends AppCompatActivity {
                         info.clear();
                         info.put("account/cancel", bar);
                         System.out.println(info.toString());
-                        Scene3.NetworkTask2 networkTask2 = new Scene3.NetworkTask2(url, info);
-                        networkTask2.execute();
-
+                        Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info,"cancel");
+                        networkTask.execute();
                         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                         startActivity(intent);
                     }
@@ -278,14 +344,12 @@ public class Scene3 extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-//                        Toast.makeText(getApplicationContext(), ".", Toast.LENGTH_LONG).show();
                         initControls();
                         info.clear();
                         info.put("account/cancel", bar);
                         System.out.println(info.toString());
-                        Scene3.NetworkTask2 networkTask2 = new Scene3.NetworkTask2(url, info);
-                        networkTask2.execute();
-
+                        Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info,"cancel");
+                        networkTask.execute();
                         // 액티비티 종료
                         finish();
                     }
