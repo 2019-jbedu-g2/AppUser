@@ -210,7 +210,7 @@ public class Scene3 extends AppCompatActivity {
     }
 
 
-    // 미루기/취소 용 네트워크 함수
+    // http 네트워크 함수
     public class NetworkTask extends AsyncTask<Void, Void, String> {
 
         private String url;
@@ -290,8 +290,9 @@ public class Scene3 extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "양보하였습니다.", Toast.LENGTH_LONG).show();
                         initControls();
                         info.clear();
-                        info.put("waiting",storenum+"/"+bar);
-                        System.out.println(info.toString());
+                        StringBuffer sb = new StringBuffer();
+                        sb.append(storenum).append("/").append(bar);
+                        info.put("waiting",sb.toString());
                         Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info,"delay");
                         networkTask.execute();
                     }

@@ -81,26 +81,26 @@ public class FragmentInfo extends Fragment {
 
             super.onPostExecute(s);
             String page = "["+s+"]";
-            String text = "";
+            StringBuffer SB = new StringBuffer();
             try {
                 JSONArray jArray = new JSONArray(page);
-                for (int i = 0; i < jArray.length(); i++) {
-                    JSONObject jObject1 = (JSONObject) jArray.get(0);
-                    String Num = (String) jObject1.get("storenum");
-                    String Name = (String) jObject1.get("storename");
-                    String TEL = (String) jObject1.get("category");
-                    String Intro = (String) jObject1.get("intro");
-                    String Inform = (String) jObject1.get("inform");
-                    String Waiting = Integer.toString((int) jObject1.get("waitingcount"));
-                    Inform = Inform.replace("/", "\n");
+                JSONObject jObject1 = (JSONObject) jArray.get(0);
+                String Num = (String) jObject1.get("storenum");
+                String Name = (String) jObject1.get("storename");
+                String TEL = (String) jObject1.get("category");
+                String Intro = (String) jObject1.get("intro");
+                String Inform = (String) jObject1.get("inform");
+                String Waiting = Integer.toString((int) jObject1.get("waitingcount"));
+                Inform = Inform.replace("/", "\n");
 
-                   text = "대기팀 : " + Waiting + "\n\n" + "StoreName : " + Name + "\n\n" + "CATEGORY : " + TEL + "\n\n" + "가게 소개\n " +
-                            Intro + "\n\n" + "가게정보\n" + Inform;
-                }
+                SB.append("대기팀 : ").append(Waiting).append("\n\n가게이름 : ").append(Name).append("\n\n분류 : ").append(TEL).append("\n\n 가게 소개\n").append(Intro).append("\n\n가게정보\n").append(Inform);
+//                   text = "대기팀 : " + Waiting + "\n\n" + "StoreName : " + Name + "\n\n" + "CATEGORY : " + TEL + "\n\n" + "가게 소개\n " +
+////                            Intro + "\n\n" + "가게정보\n" + Inform;
+
             }catch (JSONException e) {
                     e.printStackTrace();
                 }
-            tv_outPut.setText(text);
+            tv_outPut.setText(SB.toString());
         }
     }
 }
