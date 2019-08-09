@@ -16,16 +16,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class FragmentInfo extends Fragment {
     View view;
     private TextView tv_outPut;
-    String url = "http://192.168.0.20:8000/";
+    String url =  "http://192.168.0.8:8000/";
     ContentValues info = new ContentValues();
     String Storenum="";
-    String snum ="";
 
     public FragmentInfo() {
     }
@@ -68,7 +69,7 @@ public class FragmentInfo extends Fragment {
 
             String result;          // 요청 결과를 저장할 변수
             RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-            result = requestHttpURLConnection.request1(url,pageParsed1);
+            result = requestHttpURLConnection.request(url,pageParsed1);
 
             return result;
         }
@@ -79,9 +80,27 @@ public class FragmentInfo extends Fragment {
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력
 
             super.onPostExecute(s);
-            //snum = s.substring(0,10);
-           // String data = s.substring(11);
-            tv_outPut.setText(s);
+            String page = "["+s+"]";
+            String text = "";
+            try {
+                JSONArray jArray = new JSONArray(page);
+                for (int i = 0; i < jArray.length(); i++) {
+                    JSONObject jObject1 = (JSONObject) jArray.get(0);
+                    String Num = (String) jObject1.get("storenum");
+                    String Name = (String) jObject1.get("storename");
+                    String TEL = (String) jObject1.get("category");
+                    String Intro = (String) jObject1.get("intro");
+                    String Inform = (String) jObject1.get("inform");
+                    String Waiting = Integer.toString((int) jObject1.get("waitingcount"));
+                    Inform = Inform.replace("/", "\n");
+
+                   text = "대기팀 : " + Waiting + "\n\n" + "StoreName : " + Name + "\n\n" + "CATEGORY : " + TEL + "\n\n" + "가게 소개\n " +
+                            Intro + "\n\n" + "가게정보\n" + Inform;
+                }
+            }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            tv_outPut.setText(text);
         }
     }
 }

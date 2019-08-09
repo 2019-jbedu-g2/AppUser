@@ -13,10 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class FragmentMenu extends Fragment {
     View view;
     private TextView menu;
-    String url = "http://192.168.0.20:8000/";
+    String url =  "http://192.168.0.8:8000/";
     ContentValues info = new ContentValues();
     String Storenum="";
 
@@ -58,7 +62,7 @@ public class FragmentMenu extends Fragment {
 
             String result;          // 요청 결과를 저장할 변수
             RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-            result = requestHttpURLConnection.request2(url, pageParsed2);
+            result = requestHttpURLConnection.request(url, pageParsed2);
             return result;
         }
 
@@ -68,7 +72,20 @@ public class FragmentMenu extends Fragment {
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력
             super.onPostExecute(s);
 
-            menu.setText(s);
+            String page = "["+s+"]";
+            String text = "";
+            try{
+            JSONArray jArray2 = new JSONArray(page);
+            for(int i=0;i<jArray2.length();i++) {
+                JSONObject jObject2 = (JSONObject)jArray2.get(i);
+                String M = (String) jObject2.optString("menu");
+
+                text = M.replace("/","\n\n");
+            }
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+            menu.setText(text);
         }
     }
 }
