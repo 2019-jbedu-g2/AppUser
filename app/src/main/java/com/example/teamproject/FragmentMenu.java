@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class FragmentMenu extends Fragment {
     View view;
     private TextView menu;
-    String url =  "http://192.168.0.8:8000/";
+    String url =  "http://192.168.0.20:8000/";
     ContentValues info = new ContentValues();
     String Storenum="";
 

@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ImageView mGps;
     private ImageButton button;
     private PopupWindow mPopupWindow;
+    private ImageView SearchButton;
 
     // vars
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -151,8 +152,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         mSearchText = (EditText) findViewById(R.id.input_search);
         mGps = (ImageView) findViewById(R.id.ic_gps);
+        SearchButton = (ImageView) findViewById(R.id.ic_magnify);
 
         getLocationPermission();
+
+        SearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!(mSearchText.getText().toString().equals("")||mSearchText.getText().toString().equals(null))){
+                    geoLocate();
+                } else{
+                    Toast.makeText(MainActivity.this,
+                            "검색창이 비어있습니다.",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            });
     }
 
     private void init() {
