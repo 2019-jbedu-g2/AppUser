@@ -39,8 +39,8 @@ public class Scene3 extends AppCompatActivity {
     public static String barcode_st = "";
     private WebSocketClient wsc;
     ImageView barcode;
-    String url = "http://192.168.0.20:8000/";
-    String wsUrl = "ws://192.168.0.20:8000/";
+    String url = URLSetting.getURL();
+    String wsUrl = URLSetting.getWsURL();
     ContentValues info = new ContentValues();
     String storenum = "";
     String bar = "";
