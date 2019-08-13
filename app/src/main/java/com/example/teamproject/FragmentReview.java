@@ -19,7 +19,9 @@ public class FragmentReview extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.review_fragment,container,false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.review_fragment, container, false);
+        }
         return view;
     }
 }

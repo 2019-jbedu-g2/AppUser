@@ -56,25 +56,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private static final String TAG = "MainActivity";
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;   // GPS 권한
+    private static final float DEFAULT_ZOOM = 15f;                      // 디폴트 카메라 줌 정도
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
 
     // widgets
-    private EditText mSearchText;
-    private ImageView mGps;
-    private ImageButton button;
-    private PopupWindow mPopupWindow;
-    private ImageView SearchButton;
+    private EditText mSearchText;           // 지도 검색창
+    private ImageView mGps;                 //현위치 버튼
+    private ImageButton Popupbutton;             // 팝업버튼
+    private PopupWindow mPopupWindow;       // 팝업윈도우
+    private ImageView SearchButton;         //검색버튼
 
     // vars
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private GoogleMap mMap;
     private Boolean mLocationPermissionsGranted = false;
-
-    // connect
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -100,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 @Override
                 public void onInfoWindowClick(Marker marker) {
                     String storenum = "";
-                    switch(marker.getTitle().toString()) {
+                    switch(marker.getTitle().toString()) {      //나중에 서버로 옮겨야 하는 부분.
                         case "매드포갈릭 건대스타시티점":
                             storenum = "215486211";
                             break;
@@ -132,17 +129,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            button = (ImageButton) findViewById(R.id.ic_inform);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    View popupView = getLayoutInflater().inflate(R.layout.activity_popup,null);
-                    mPopupWindow = new PopupWindow(popupView,
-                            LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                    mPopupWindow.setFocusable(true);
-                    mPopupWindow.showAtLocation(popupView, Gravity.CENTER,0,0);
-                }
-            });
         }
     }
 
@@ -150,9 +136,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mSearchText = (EditText) findViewById(R.id.input_search);
-        mGps = (ImageView) findViewById(R.id.ic_gps);
-        SearchButton = (ImageView) findViewById(R.id.ic_magnify);
+
+        initControls();
 
         getLocationPermission();
 
@@ -168,6 +153,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
             });
+        Popupbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {            // 안내 버튼 클릭 시 Marker 안내 팝업 윈도우
+                View popupView = getLayoutInflater().inflate(R.layout.activity_popup,null);
+                mPopupWindow = new PopupWindow(popupView,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                mPopupWindow.setFocusable(true);
+                mPopupWindow.showAtLocation(popupView, Gravity.CENTER,0,0);
+            }
+        });
+    }
+    private void initControls(){
+        if(mSearchText == null) {
+            mSearchText = (EditText) findViewById(R.id.input_search);
+        }
+        if(mGps == null) {
+            mGps = (ImageView) findViewById(R.id.ic_gps);
+        }
+        if(SearchButton == null) {
+            SearchButton = (ImageView) findViewById(R.id.ic_magnify);
+        }
+        if(Popupbutton == null) {
+            Popupbutton = (ImageButton) findViewById(R.id.ic_inform);
+        }
     }
 
     private void init() {
@@ -263,10 +272,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         }
 
-//        if(title.equals("konkuk univ"))
-//            showAllRestaurantKonkuk();
-//        if(title.equals("hongik univ"))
-//            showAllRestaurantHongik();
         switch (title.toString()){
             case "konkuk univ":
                 showAllRestaurantKonkuk();

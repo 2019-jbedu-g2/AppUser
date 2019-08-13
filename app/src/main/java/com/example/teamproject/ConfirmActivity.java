@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class ConfirmActivity extends AppCompatActivity {
-    private Button reviewB, ReturnB;
+    private Button reviewB, ReturnB;  // 리뷰남기기 버튼 / 메인화면으로 버튼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +19,7 @@ public class ConfirmActivity extends AppCompatActivity {
         setContentView(R.layout.activity_confirm);
 
         init();
-
+        //  리뷰남기기 버튼 클릭 시
         reviewB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -31,6 +31,7 @@ public class ConfirmActivity extends AppCompatActivity {
                 });
             }
         });
+        // 메인화면으로 버튼 클릭 시
         ReturnB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -18,18 +18,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FragmentMenu extends Fragment {
-    View view;
-    private TextView menu;
-    String url =  URLSetting.getURL();
+    View view;                  // view
+    private TextView menu;      // Fragment 내의 메뉴란
+    String url =  URLSetting.getURL();   // 서버 URL
     ContentValues info = new ContentValues();
-    String Storenum="";
+    String Storenum="";     // 매장번호
 
     public FragmentMenu() {
     }
     public void onAttach(Context context){
         super.onAttach(context);
         if(getActivity() != null && getActivity() instanceof Scene2){
-            Storenum = ((Scene2) getActivity()).getData();
+            Storenum = ((Scene2) getActivity()).getData();   // Scene2 로부터 매장번호를 넘겨 받는다.
         }
     }
 
@@ -38,10 +38,14 @@ public class FragmentMenu extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.menu_fragment,container,false);
+        if(view == null){
+            view = inflater.inflate(R.layout.menu_fragment,container,false);
+        }
+        if(menu == null){
+            menu = (TextView) view.findViewById(R.id.menu);
+        }
         info.put("store",Storenum);
-        NetworkTask networkTask = new NetworkTask(url,info);
-        menu = (TextView) view.findViewById(R.id.menu);
+        NetworkTask networkTask = new NetworkTask(url,info);  // 매장 정보를 통해 서버로부터 메뉴를 전달 받는다.
         networkTask.execute();
         return view;
     }
@@ -76,7 +80,7 @@ public class FragmentMenu extends Fragment {
             String text = "";
             try{
             JSONArray jArray2 = new JSONArray(sb.toString());
-            for(int i=0;i<jArray2.length();i++) {
+            for(int i=0;i<jArray2.length();i++) {           //json 파싱
                 JSONObject jObject2 = (JSONObject)jArray2.get(i);
                 String M = (String) jObject2.optString("menu");
 

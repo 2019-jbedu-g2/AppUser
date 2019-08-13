@@ -65,13 +65,13 @@ public class RequestHttpURLConnection {
             urlConn.setConnectTimeout(1000);  // 서버 접속시 연결 시간
             urlConn.setRequestMethod("GET"); // URL 요청에 대한 메소드 설정 : GET
             urlConn.setDoInput(true);
-//            urlConn.setDoOutput(true);
+//            urlConn.setDoOutput(true);  // 주석 해제하면 강제로 POST 설정.
             urlConn.setRequestProperty("Accept", "application/json");
             urlConn.setRequestProperty("Context_Type", "application/json");
 //            urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
 //            urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;cahrset=UTF-8");
 
-//            [2-2]. parameter 전달 및 데이터 읽어오기.
+//            [2-2]. parameter 전달 및 데이터 읽어오기. 이부분 해제하면 강제로 POST로 설정.
 //            String strParams = sbParams.toString(); //sbParams에 정리한 파라미터들을 스트링으로 저장. 예)id=id1&pw=123;
 //            Log.d(TAG,url.toString());
 //            OutputStream os = urlConn.getOutputStream();

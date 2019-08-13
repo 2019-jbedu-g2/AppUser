@@ -20,37 +20,26 @@ public class Scene2 extends AppCompatActivity {
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
+    private Button btnPre, btnRow;
     String storenum;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scene2);
-        tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
-        appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
-        viewPager = (ViewPager) findViewById(R.id.viewpager_id);
 
-        storenum = getIntent().getStringExtra("num");
+        initControls();
+
+        storenum = getIntent().getStringExtra("num");   // MainActivity로부터 매장번호를 받아 변수에 저장.
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-
         // Add Fragment
         adapter.AddFragment(new FragmentInfo(),"정보");
         adapter.AddFragment(new FragmentMenu(),"메뉴");
         adapter.AddFragment(new FragmentReview(),"리뷰");
 
-//        String title = "";
-//        Bundle extra = getIntent().getExtras();
-//        if (extra == null){
-//            title = "error";
-//        }else{
-//            title = extra.getString("title");
-//        }
-
         //adapter Setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-
-        Button btnPre = (Button) findViewById(R.id.btnPre);
-        Button btnRow = (Button) findViewById(R.id.btnRow);
 
         btnPre.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +57,25 @@ public class Scene2 extends AppCompatActivity {
             }
         });
     }
+    private void initControls(){
+        if(tabLayout == null){
+            tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
+        }
+        if(appBarLayout == null){
+            appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
+        }
+        if(viewPager == null){
+            viewPager = (ViewPager) findViewById(R.id.viewpager_id);
+        }
+        if(btnPre == null) {
+            btnPre = (Button) findViewById(R.id.btnPre);
+        }
+        if(btnRow == null) {
+            btnRow = (Button) findViewById(R.id.btnRow);
+        }
+    }
 
     public String getData(){
-
         return storenum;
     }
 }

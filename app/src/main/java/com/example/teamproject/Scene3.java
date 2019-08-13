@@ -54,7 +54,6 @@ public class Scene3 extends AppCompatActivity {
 
         initControls();
 
-        Intent getin = getIntent();
         storenum = getIntent().getStringExtra("num");
         info.put("waiting", storenum);
         Scene3.NetworkTask networkTask = new Scene3.NetworkTask(url, info, "barcode");
@@ -272,7 +271,7 @@ public class Scene3 extends AppCompatActivity {
         }
         return bitmap;
     }
-
+    // 경고창 설정.
     public void show_alert(final int code) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         switch (code){
@@ -306,7 +305,6 @@ public class Scene3 extends AppCompatActivity {
                                 break;
                             case 2:
                                 Toast.makeText(getApplicationContext(), "양보하였습니다.", Toast.LENGTH_LONG).show();
-                                initControls();
                                 info.clear();
                                 StringBuffer sb = new StringBuffer();
                                 sb.append(storenum).append("/").append(bar);
