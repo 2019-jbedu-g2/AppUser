@@ -73,14 +73,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Boolean mLocationPermissionsGranted = false;
 
+    private String Location;
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "검색한 지역으로 이동합니다", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "검색한 지역으로 이동합니다", Toast.LENGTH_LONG).show();
         mMap = googleMap;
 
         if (mLocationPermissionsGranted) {
-            getDeviceLocation();
-
+            if(!Location.equals("MyLocate")){
+                geoLocate();
+            }else {
+                getDeviceLocation();
+            }
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -92,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
             init();
+
+            showAllRestaurantHongik();
+            showAllRestaurantKonkuk();
 
             mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
@@ -136,15 +144,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initControls();
-
         getLocationPermission();
-
+        initControls();
+        Location = getIntent().getStringExtra("SearchLocate");
+        if(!Location.equals("MyLocate")){
+            mSearchText.setText(Location);
+        }
         SearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!(mSearchText.getText().toString().equals("")||mSearchText.getText().toString().equals(null))){
+                    hideSoftKeyboard();
                     geoLocate();
                 } else{
                     Toast.makeText(MainActivity.this,
@@ -211,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void geoLocate() {
         Log.d(TAG,"geoLocate: geolocating");
         String searchString = mSearchText.getText().toString();
+        Log.d(TAG,searchString);
         Geocoder geocoder = new Geocoder(MainActivity.this);
         List<Address> list = new ArrayList<>();
         try {
@@ -272,16 +283,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         }
 
-        switch (title.toString()){
-            case "konkuk univ":
-                showAllRestaurantKonkuk();
-                break;
-            case "hongik univ":
-                showAllRestaurantHongik();
-                break;
-            default:
-                break;
-        }
+//        switch (title.toString()){
+//            case "대한민국 서울특별시 광진구 자양1동 능동로 120":
+//                showAllRestaurantKonkuk();
+//                break;
+//            case "대한민국 서울특별시 마포구 상수동 와우산로 94":
+//                showAllRestaurantHongik();
+//                break;
+//            default:
+//                break;
+//        }
         hideSoftKeyboard();
     }
 

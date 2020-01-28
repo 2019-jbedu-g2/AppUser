@@ -13,9 +13,9 @@ import android.widget.Toast;
 public class ConfirmActivity extends AppCompatActivity {
     private Button reviewB, ReturnB;  // 리뷰남기기 버튼 / 메인화면으로 버튼
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm);
 
         init();

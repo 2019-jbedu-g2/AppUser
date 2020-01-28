@@ -15,9 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SearchActivity"></activity>
         <activity
             android:name=".ConfirmActivity"
-            android:label="@string/title_activity_confirm"></activity>
+            android:label="@string/title_activity_confirm" />
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
@@ -37,7 +38,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="" />
+            android:value="AIzaSyB8AXq-Xd-mCupI9pvj8byKtwzdGKSCi84" />
     </application>
 
 </manifest>
